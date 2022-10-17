@@ -4,8 +4,8 @@ library(sf)
 library(kableExtra)
 library(tmap)
 library(gridExtra)
-install.packages("BAMMtools")
 library(BAMMtools)
+source("https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/functions.r")
 
 #No Scientific Notation
 options(scipen=999)
@@ -34,9 +34,13 @@ RD <- st_read("D:\\MUSA500\\HW 1\\RegressionData.shp")
 st_crs(RD)
 g(RD)
 
+plot(RD)
+
 st_is_valid(RD)
 
 PHL_union <- st_union(st_make_valid(RD$geometry))
+
+g()
 
 #Plots
 plot1 <- ggplot()+
@@ -102,3 +106,25 @@ plot5
 plot1
 grid.arrange(plot2, plot3, plot4, plot5)
 grid.arrange(plot5, plot5.2)
+
+
+#Part 6 Homework
+
+## Histogram
+
+ggplot(data=, aes(x=MAE)) +
+  geom_histogram(color="blue", fill = "blue")+
+  labs(title = "Distribution of MAE")+
+  plotTheme()
+
+## Choropleth Map
+
+ggplot()+
+  geom_sf(data=basemap, fill="white", color="gray")+
+  geom_sf(data=errorData, aes(color=q5(residualColumn)), size = 0.4)+
+  scale_color_manual(values = palette5,
+                     labels = assignColorBreaks(<data>, NCOLORS=4, method="jenks"),
+                     name= "Price Error\n(Quintile Breaks)")+
+  labs(title="Residual Error of Price Estimation", subtitle = "Mecklenburg County, NC")+
+  mapTheme()+
+  guides(colour = guide_legend(override.aes = list(size=3)))
