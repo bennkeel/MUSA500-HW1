@@ -190,31 +190,34 @@ row1 <- plot_grid(s1,s2)
 row2 <- plot_grid(s3,s4)
 plot_grid(title, row1, row2, nrow = 3,   rel_heights = c(0.1, 1, 1))
 
-#1c
+# 1c
 correlate(data %>% select(MEDHVAL, PCTBACHMOR, NBELPOV100, PCTVACANT, PCTSINGLES)) %>%  autoplot()+
   geom_text(aes(label = round(r,digits=2)),size = 2) +
   labs(title= 'Pearson Correlation of Variables')
 
-#3a regression 
+# 3a regression 
 
 reg1 <- lm(MEDHVALlog ~ ., data %>% select(MEDHVALlog, PCTBACHMOR, NBELPOV100log, PCTVACANT, PCTSINGLES))
 
+### summary table of regression
 summary(reg1)
-anova(reg1)%>%
-  kable()%>%
-  kable_styling()%>%
-  footnote(general_title = "Summary Table of Baseline Regression")
-
 
 reg1.summary <- broom::tidy(reg1)%>%
   kable()%>%
   kable_styling()%>%
   footnote(general_title = "Summary Table of Baseline Regression")
 
-stargazer(reg1)
-
 reg1.summary
 
+stargazer(reg1, type='text')
+
+anova(reg1)%>%
+  kable()%>%
+  kable_styling()%>%
+  footnote(general_title = "Summary Table of Baseline Regression")
+
+
+### Getting estimates and residuals into the dataframe
 data$fitted <- reg1 %>% fitted()
 data$resids <- reg1 %>% residuals()
 data$resids_standard <- reg1 %>% rstandard()
